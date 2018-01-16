@@ -84,31 +84,14 @@ switch(process.argv[2]){
 
 	case 'my-tweets':
 
-		console.log('Checking tweets');
-		var params = {screen_name: 'matva55'};
-
-		client.get('statuses/user_timeline', params, function(error, tweets, response){
-
-			if(!error){
-				console.log(tweets.length);
-				var tweet_count = 0
-				while(tweet_count < tweets.length){
-					console.log('Tweet Number ' + (tweet_count+1) + ': ' + tweets[tweet_count].text);
-					console.log('Tweet Number ' + (tweet_count+1) + ' was created at: ' + tweets[tweet_count].created_at + '\n'); 
-					tweet_count++;
-				}
-			}
-			else{
-				console.log("Error code: " + error[0].code + '. ' + error[0].message);
-				return;
-			}
-		});
+		console.log('Accessing Twitter...');
+		twitterSearch();
 		break;
 
 	case 'spotify-this-song':
 
+		console.log('Accessing Spotify...');
 		spotifySearch();
-		console.log('Checking spotify');
 		break;
 
 	case 'movie-this':
