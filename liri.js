@@ -31,84 +31,52 @@ function twitterSearch(){
 	});
 }
 
+function spotifyRequest(query){
+	spotify
+		.search({type: 'track', query: query})
+		.then(function(response){
+
+			var search_results = response.tracks.items;
+			for(var i = 0; i < search_results.length; i++){
+				if(search_results[i].name.toUpperCase() != query.toUpperCase()){
+					continue;
+				}
+
+				console.log('Song name: ' + search_results[i].name);
+				console.log('---------------');
+				console.log('Album Name: ' + search_results[i].album.name);
+				console.log('---------------');
+				var artists = search_results[i].artists;
+				for(var j = 0; j < artists.length; j++){
+
+					console.log('Artist ' + (j+1) + ': ' + artists[j].name);
+
+					
+				}
+				console.log('---------------');
+				console.log('Preview Link: ' + search_results[i].preview_url);
+				console.log('\n');
+			}
+
+		}).catch(function(error){
+
+			console.log(error);
+
+		});
+}
+
 function spotifySearch(){
 
-	var defaultFlag = false;
 	var query = '';
-		if(process.argv[3] == undefined){
-			query = 'The Sign';
-			defaultFlag = true
+	if(process.argv[3] == undefined){
+		query = 'The Sign';
 		}
-		else{
-			query = process.argv[3];
-		}
+	else{
+		query = process.argv[3];
+	}
 
-		if(defaultFlag == true){
-			spotify
-				.search({type: 'track', query: query})
-				.then(function(response){
+	spotifyRequest(query);
 
-					var search_results = response.tracks.items;
-					for(var i = 0; i < search_results.length; i++){
-						console.log(search_results[i].name);
-						if(search_results[i].name.toUpperCase() != query.toUpperCase()){
-							continue;
-						}
-
-						console.log('Song name: ' + search_results[i].name);
-						console.log('---------------');
-						console.log('Album Name: ' + search_results[i].album.name);
-						console.log('---------------');
-						var artists = search_results[i].artists;
-						for(var j = 0; j < artists.length; j++){
-
-							console.log('Artist ' + (j+1) + ': ' + artists[j].name);
-
-					
-						}
-						console.log('---------------');
-						console.log('Preview Link: ' + search_results[i].preview_url);
-						console.log('\n');
-					}
-
-					}).catch(function(error){
-
-						console.log(error);
-
-					});
-				}
-		else{
-			spotify
-				.search({type: 'track', query: query})
-				.then(function(response){
-					var search_results = response.tracks.items;
-					for(var i = 0; i < search_results.length; i++){
-						console.log(search_results[i].name);
-						if(search_results[i].name.toUpperCase() != query.toUpperCase()){
-							continue;
-						}
-						console.log('Song name: ' + search_results[i].name);
-						console.log('---------------');
-						console.log('Album Name: ' + search_results[i].album.name);
-						console.log('---------------');
-						var artists = search_results[i].artists;
-						for(var j = 0; j < artists.length; j++){
-
-							console.log('Artist ' + (j+1) + ': ' + artists[j].name);
-
-					
-						}
-						console.log('---------------');
-						console.log('Preview Link: ' + search_results[i].preview_url);
-						console.log('\n');
-					}
-
-				}).catch(function(error){
-
-					console.log(error);
-
-				});
-			}
 }
 
 
