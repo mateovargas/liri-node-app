@@ -11,7 +11,6 @@ var client = new Twitter(keys.twitter);
 
 function twitterSearch(){
 
-	console.log('Checking tweets');
 	var params = {screen_name: 'matva55'};
 
 	client.get('statuses/user_timeline', params, function(error, tweets, response){
@@ -31,52 +30,92 @@ function twitterSearch(){
 	});
 }
 
-function spotifyRequest(query){
-	spotify
-		.search({type: 'track', query: query})
-		.then(function(response){
-
-			var search_results = response.tracks.items;
-			for(var i = 0; i < search_results.length; i++){
-				if(search_results[i].name.toUpperCase() != query.toUpperCase()){
-					continue;
-				}
-
-				console.log('Song name: ' + search_results[i].name);
-				console.log('---------------');
-				console.log('Album Name: ' + search_results[i].album.name);
-				console.log('---------------');
-				var artists = search_results[i].artists;
-				for(var j = 0; j < artists.length; j++){
-
-					console.log('Artist ' + (j+1) + ': ' + artists[j].name);
-
-					
-				}
-				console.log('---------------');
-				console.log('Preview Link: ' + search_results[i].preview_url);
-				console.log('\n');
-			}
-
-		}).catch(function(error){
-
-			console.log(error);
-
-		});
-}
-
 function spotifySearch(){
 
 	var query = '';
+
 	if(process.argv[3] == undefined){
+
 		query = 'The Sign';
+
 		}
 	else{
+
+		query = process.argv[3];
+
+	}
+
+    spotify
+	.search({type: 'track', query: query})
+	.then(function(response){
+
+		var search_results = response.tracks.items;
+		for(var i = 0; i < search_results.length; i++){
+			if(search_results[i].name.toUpperCase() != query.toUpperCase()){
+				continue;
+			}
+
+			console.log('Song name: ' + search_results[i].name);
+			console.log('---------------');
+			console.log('Album Name: ' + search_results[i].album.name);
+			console.log('---------------');
+			var artists = search_results[i].artists;
+			for(var j = 0; j < artists.length; j++){
+
+				console.log('Artist ' + (j+1) + ': ' + artists[j].name);
+
+					
+			}
+			console.log('---------------');
+			console.log('Preview Link: ' + search_results[i].preview_url);
+			console.log('\n');
+		}
+
+	}).catch(function(error){
+
+		console.log(error);
+
+	});
+
+}
+
+function omdbSearch(){
+
+	var query = '';
+	if(process.argv[3] == undefined){
+
+		query = 'Mr. Nobody';
+
+	}
+	else{
+
 		query = process.argv[3];
 	}
 
-	spotifyRequest(query);
+	Request({
+		method: 'GET',
+		uri: "http://www.omdbapi.com/?apikey=5dd51277&t=" + query + "&y=&plot=short",
+		gzip: true
+	}, function(error, response, body){
 
+		console.log(body);
+		console.log('Movie Title: ' + body.Title);
+		console.log('-----------');
+		console.log('Year: '+ body.Year);
+		console.log('-----------');
+		console.log('IMDB Rating: ' + body.Ratings[0].value);
+		console.log('-----------');
+		console.log('Rotten Tomatoes Rating' + body.Ratings[1].value);
+		console.log('-----------');
+		console.log('Country: ' + body.Country);
+		console.log('-----------');
+		console.log('Language: ' + body.Language);
+		console.log('-----------');
+		console.log('Plot: ' + body.Plot);
+		console.log('-----------');
+		console.log('Starring: ' + body.Actors);
+
+	});
 }
 
 
@@ -84,18 +123,19 @@ switch(process.argv[2]){
 
 	case 'my-tweets':
 
-		console.log('Accessing Twitter...');
+		console.log('Accessing Twitter...\n');
 		twitterSearch();
 		break;
 
 	case 'spotify-this-song':
 
-		console.log('Accessing Spotify...');
+		console.log('Accessing Spotify...\n');
 		spotifySearch();
 		break;
 
 	case 'movie-this':
-		console.log('Checking OMDB');
+		console.log('Accessing OMDB...\n');
+		omdbSearch();
 		break;
 	case 'do-what-it-says':
 		console.log('Doing');
