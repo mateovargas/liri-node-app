@@ -1,0 +1,23 @@
+{
+  "name": "liri-node-app",
+  "version": "1.0.0",
+  "description": "LIRI app with node.",
+  "main": "liri.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mateovargas/liri-node-app.git"
+  },
+  "author": "Mateo Vargas",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mateovargas/liri-node-app/issues"
+  },
+  "homepage": "https://github.com/mateovargas/liri-node-app#readme",
+  "dependencies": {
+    "dotenv": "^4.0.0",
+    "node-spotify-api": "^1.0.7"
+  }
+}
