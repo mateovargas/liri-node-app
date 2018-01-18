@@ -4,10 +4,13 @@ var Twitter = require('twitter');
 var Spotify = require('node-spotify-api');
 var Request = require('request');
 var keys = require('./keys.js');
+var file_system = require('fs');
 
 
 var spotify = new Spotify(keys.spotify);
 var client = new Twitter(keys.twitter);
+var line_break = '---------------';
+
 
 function twitterSearch(){
 
@@ -18,30 +21,43 @@ function twitterSearch(){
 			console.log(tweets.length);
 			var tweet_count = 0
 			while(tweet_count < tweets.length){
-				console.log('Tweet Number ' + (tweet_count+1) + ': ' + tweets[tweet_count].text);
-				console.log('Tweet Number ' + (tweet_count+1) + ' was created at: ' + tweets[tweet_count].created_at + '\n'); 
+
+				var tweet_string = 'Tweet Number ' + (tweet_count+1) + ': ' + tweets[tweet_count].text;
+				var tweet_date = 'Tweet Number ' + (tweet_count+1) + ' was created at: ' + tweets[tweet_count].created_at;
+
+				console.log(tweet_string);
+				writeFile(tweet_string);
+
+				console.log(line_break);
+				writeFile(line_break);
+
+				console.log(tweet_date);
+				writeFile(tweet_date);
+
 				tweet_count++;
 			}
 		}
 		else{
+
 			console.log("Error code: " + error[0].code + '. ' + error[0].message);
 			return;
+
 		}
 	});
 }
 
-function spotifySearch(){
+function spotifySearch(song_to_find){
 
 	var query = '';
 
-	if(process.argv[3] == undefined){
+	if(song_to_find == undefined){
 
 		query = 'The Sign';
 
 		}
 	else{
 
-		query = process.argv[3];
+		query = song_to_find;
 
 	}
 
@@ -52,23 +68,43 @@ function spotifySearch(){
 		var search_results = response.tracks.items;
 		for(var i = 0; i < search_results.length; i++){
 			if(search_results[i].name.toUpperCase() != query.toUpperCase()){
-				continue;
-			}
 
-			console.log('Song name: ' + search_results[i].name);
-			console.log('---------------');
-			console.log('Album Name: ' + search_results[i].album.name);
-			console.log('---------------');
+				continue;
+
+			}
+			var song_name_string = 'Song name: ' + search_results[i].name;
+			var album_name_string = 'Album Name: ' + search_results[i].album.name;
+			var preview_link_string = 'Preview Link: ' + search_results[i].preview_url;
+
+			console.log(song_name_string);
+			writeFile(song_name_string);
+
+			console.log(line_break);
+			writeFile(line_break);
+
+			console.log(album_name_string);
+			writeFile(album_name_string);
+
+			console.log(line_break);
+			writeFile(line_break);
+
 			var artists = search_results[i].artists;
 			for(var j = 0; j < artists.length; j++){
 
-				console.log('Artist ' + (j+1) + ': ' + artists[j].name);
+				var artist_name_string = 'Artist ' + (j+1) + ': ' + artists[j].name;
+				console.log(artist_name_string);
+				writeFile(artist_name_string);
 
-					
 			}
-			console.log('---------------');
-			console.log('Preview Link: ' + search_results[i].preview_url);
-			console.log('\n');
+
+			console.log(line_break);
+			writeFile(line_break);
+
+			console.log(preview_link_string);
+			writeFile(preview_link_string);
+			
+			console.log(line_break);
+			writeFile(line_break);
 		}
 
 	}).catch(function(error){
@@ -79,17 +115,17 @@ function spotifySearch(){
 
 }
 
-function omdbSearch(){
+function omdbSearch(movie_to_find){
 
 	var query = '';
-	if(process.argv[3] == undefined){
+	if(movie_to_find == undefined){
 
 		query = 'Mr. Nobody';
 
 	}
 	else{
 
-		query = process.argv[3];
+		query = movie_to_find;
 	}
 
 	Request({
@@ -98,24 +134,105 @@ function omdbSearch(){
 		gzip: true
 	}, function(error, response, body){
 
-		console.log(body);
-		console.log('Movie Title: ' + body.Title);
-		console.log('-----------');
-		console.log('Year: '+ body.Year);
-		console.log('-----------');
-		console.log('IMDB Rating: ' + body.Ratings[0].value);
-		console.log('-----------');
-		console.log('Rotten Tomatoes Rating' + body.Ratings[1].value);
-		console.log('-----------');
-		console.log('Country: ' + body.Country);
-		console.log('-----------');
-		console.log('Language: ' + body.Language);
-		console.log('-----------');
-		console.log('Plot: ' + body.Plot);
-		console.log('-----------');
-		console.log('Starring: ' + body.Actors);
+		var movie = JSON.parse(body);
+		var title_string = 'Movie Title: ' + movie.Title;
+		var year_string = 'Year: ' + movie.Year;
+		var imdb_string = 'IMDB Rating: ' + movie.Ratings[0].Value;
+		var rt_string = 'Rotten Tomatoes Rating: ' + movie.Ratings[1].Value;
+		var country_string = 'Country: ' + movie.Country;
+		var language_string = 'Language: ' + movie.Language;
+		var plot_string = 'Plot: ' + movie.Plot;
+		var actors_string = 'Starring: ' + movie.Actors;
+
+		console.log(title_string);
+		writeFile(title_string);
+
+		console.log(line_break);
+		writeFile(line_break);
+
+		console.log(year_string);
+		writeFile(year_string);
+
+		console.log(line_break);
+		writeFile(line_break);
+
+		console.log(imdb_string);
+		writeFile(imdb_string);
+
+		console.log(line_break);
+		writeFile(line_break);
+
+		console.log(rt_string);
+		writeFile(rt_string);
+
+		console.log(line_break);
+		writeFile(line_break);
+
+		console.log(country_string);
+		writeFile(country_string);
+
+		console.log(line_break);
+		writeFile(line_break);
+
+		console.log(language_string);
+		writeFile(language_string);
+
+		console.log(line_break);
+		writeFile(line_break);
+
+		console.log(plot_string);
+		writeFile(plot_string);
+
+		console.log(line_break);
+		writeFile(line_break);
+
+		console.log(actors_string);
+		writeFile(actors_string);
+
+		console.log(line_break);
+		writeFile(line_break);
 
 	});
+}
+
+function readFile(){
+
+	file_system.readFile('random.txt', 'utf8', function(err, data){
+
+		if(err){
+			console.log(err);
+		}
+
+		var command = data.split('\n');
+		command.forEach(function(string){
+
+			var order = string.split(',');
+
+			if(order[0] == 'my-tweets' && order[1] == ''){
+
+				twitterSearch();
+
+			}
+			else if(order[0] == 'spotify-this-song'){
+
+				spotifySearch(order[1]);
+
+			}
+			else if(order[0] == 'movie-this'){
+
+				omdbSearch(order[1]);
+			}
+
+		})
+	});
+}
+
+function writeFile(string_to_write){
+
+	var logger = file_system.createWriteStream('log.txt', {'flags': 'a'});
+	logger.write(string_to_write + '\n');
+	logger.end();
+
 }
 
 
@@ -130,15 +247,16 @@ switch(process.argv[2]){
 	case 'spotify-this-song':
 
 		console.log('Accessing Spotify...\n');
-		spotifySearch();
+		spotifySearch(process.argv[3]);
 		break;
 
 	case 'movie-this':
 		console.log('Accessing OMDB...\n');
-		omdbSearch();
+		omdbSearch(process.argv[3]);
 		break;
 	case 'do-what-it-says':
-		console.log('Doing');
+		console.log('Your wish is my command, master...');
+		readFile();
 		break; 
 }
 
