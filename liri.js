@@ -1,24 +1,31 @@
-require("dotenv").config();
 
-var Twitter = require('twitter');
+//Initializes necessary Node packages.
+require("dotenv").config();
+var Twitter = require('twitter'); 
 var Spotify = require('node-spotify-api');
 var Request = require('request');
 var keys = require('./keys.js');
 var file_system = require('fs');
 
-
+//Initializes Spotify and twitter objects with information from Keys.js
 var spotify = new Spotify(keys.spotify);
-var client = new Twitter(keys.twitter);
+var twitter = new Twitter(keys.twitter);
+
 var line_break = '---------------';
 
-
+//Function that prints out the last twenty tweets from the specified account for this application.
+//It then writes those tweets to the log.txt file. At the moment, linked to my personal acct.
 function twitterSearch(){
 
+	//Provides screen name for twitter usage.
 	var params = {screen_name: 'matva55'};
 
-	client.get('statuses/user_timeline', params, function(error, tweets, response){
+	//built in function that gets the last 20 tweets from the specified user's timeline.
+	twitter.get('statuses/user_timeline', params, function(error, tweets, response){
+		
+		//Checks if there is an error and if not, proceeds to print out the tweets.
 		if(!error){
-			console.log(tweets.length);
+
 			var tweet_count = 0
 			while(tweet_count < tweets.length){
 
@@ -35,6 +42,7 @@ function twitterSearch(){
 				writeFile(tweet_date);
 
 				tweet_count++;
+
 			}
 		}
 		else{
@@ -46,6 +54,10 @@ function twitterSearch(){
 	});
 }
 
+//Function that takes in a string for the song name to search and
+//then prints out the top hits from Spotify's api 
+//for that particular title. Defaults to
+//Ace of Base's 'The Sign' if no input from command line.
 function spotifySearch(song_to_find){
 
 	var query = '';
@@ -61,6 +73,8 @@ function spotifySearch(song_to_find){
 
 	}
 
+	//Searches spotify's database for the specific song title. For each result
+	//Prints out the title, album, artists, and preview link. 
     spotify
 	.search({type: 'track', query: query})
 	.then(function(response){
@@ -102,7 +116,7 @@ function spotifySearch(song_to_find){
 
 			console.log(preview_link_string);
 			writeFile(preview_link_string);
-			
+
 			console.log(line_break);
 			writeFile(line_break);
 		}
@@ -115,6 +129,9 @@ function spotifySearch(song_to_find){
 
 }
 
+//Function that searches the OMDB database for a given movie.
+//Uses the Node Request to reach OMDB database and prints out the
+//title, year, ratings, country, language, plot, and actors.
 function omdbSearch(movie_to_find){
 
 	var query = '';
@@ -195,6 +212,9 @@ function omdbSearch(movie_to_find){
 	});
 }
 
+//Function that reads from random.txt and completes the commands
+//that are in the file. The commands are the commands possible
+//from the command line.
 function readFile(){
 
 	file_system.readFile('random.txt', 'utf8', function(err, data){
@@ -227,6 +247,7 @@ function readFile(){
 	});
 }
 
+//Function that continually updates the logfile with a string
 function writeFile(string_to_write){
 
 	var logger = file_system.createWriteStream('log.txt', {'flags': 'a'});
@@ -235,7 +256,7 @@ function writeFile(string_to_write){
 
 }
 
-
+//Switch case to decide which command to run
 switch(process.argv[2]){
 
 	case 'my-tweets':
